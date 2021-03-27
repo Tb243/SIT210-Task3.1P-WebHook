@@ -1,0 +1,32 @@
+// This #include statement was automatically added by the Particle IDE.
+#include <Adafruit_DHT.h>
+
+#define DHTPIN D2
+#define DHTTYPE DHT22
+DHT dht(DHTPIN, DHTTYPE);
+
+double hum;
+double temp;
+int led = D7;  // The on-board LED
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(led, OUTPUT);
+    dht.begin();
+    Particle.variable("temp", temp);
+    Particle.variable("temp", hum);
+}
+
+void loop() {
+  digitalWrite(led, HIGH);   // Turn ON the LED
+
+  //get temp and humidity
+  temp = dht.getTempCelcius();
+  hum = dht.getHumidity();
+  
+  //format the temp and humidity ready for publishing
+  String data = String::format("{\"temp\":%f, \"hum\":%f}", temp, hum);
+  Particle.publish("temp", data, PRIVATE);
+  delay(10000);
+  
+}
